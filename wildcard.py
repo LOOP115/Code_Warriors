@@ -16,4 +16,4 @@ def wildcard():
     session.close()
 
 
-wildcard()
+# wildcard()

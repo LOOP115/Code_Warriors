@@ -1,6 +1,6 @@
 import time
 import string
-from init import login, domain, flag_pattern
+from init import login, domain
 
 
 find_user_url = domain + "find-user.php"
